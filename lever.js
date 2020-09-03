@@ -83,7 +83,7 @@ function viewAllDep() {
 
 function viewAllRol() {
     console.log("retrieving roles from database");
-    connection.query("SELECT * from role", (err, result) => {
+    connection.query("SELECT role.id, role.title, role.salary, department.name AS department FROM role INNER JOIN department ON role.department_id = department.id", (err, result) => {
         if (err) throw err;
         console.table(result);
         start();
@@ -116,7 +116,7 @@ function addDep() {
         });
 }
 
-function addRole() {
+function getDep() {
     const departments = [];
     connection.query("SELECT name FROM department", (err, result) => {
         if (err) throw err;
@@ -124,6 +124,49 @@ function addRole() {
             departments.push(dep.name);
         });
     });
+    return departments;
+}
+
+function getRole() {
+    const roles = [];
+    connection.query("SELECT title FROM role", (err, result) => {
+        if (err) throw err;
+        result.forEach(role => {
+            roles.push(role.title);
+        });
+    });
+    return roles;
+}
+
+function getMgr() {
+    const managers = [];
+    connection.query("SELECT CONCAT(first_name, ' ' ,last_name) AS name FROM employee WHERE manager_id is NULL", (err, result) => {
+        if (err) throw err;
+        result.forEach(employee => {
+            managers.push(employee.name);
+        });
+    });
+    return managers;
+}
+
+function getId(answer, table) {
+    let dept_id;
+    connection.query("SELECT id FROM ? WHERE name = ?", [table, answer.department], (err, result) => {
+        if (err) throw err;
+        dept_id = result[0].id;
+        insertRole(answer, dept_id);
+    });
+}
+
+function insertRole(answer, id) {
+    connection.query("INSERT INTO role (title, salary, department_id) VALUES (?,?,?)", [answer.title, parseInt(answer.salary), id], (err, result) => {
+        if (err) throw err;
+    })
+    console.log("Added role to database");
+    start();
+}
+
+function addRole() {
     inquirer
         .prompt([
             {
@@ -140,31 +183,43 @@ function addRole() {
                 name: "department",
                 type: "list",
                 message: "What is the role department?",
-                choices: departments
+                choices: getDep()
             }
         ])
         .then(answer => {
-            console.log(answer);
-            let dept_id;
-            connection.query("SELECT id FROM department WHERE name = ?", answer.department, (err, result) => {
-                if (err) throw err;
-                dept_id = result[0].id;
-                insertRole(answer, dept_id);
-            });
+            getId(answer, "department");
         });
 }
 
-function insertRole(answer, id) {
-    connection.query("INSERT INTO role (title, salary, department_id) VALUES (?,?,?)", [answer.title, parseInt(answer.salary), id], (err, result) => {
-        if (err) throw err;
-    })
-    console.log("Added role to database");
-    start();
-}
 
-// function addEmp() {
-//     console.log("Added employee to database");
-// }
+
+function addEmp() {
+    inquirer
+        .prompt([
+            {
+                name: "fname",
+                type: "input",
+                message: "What is the employee's first name?"
+            },
+            {
+                name: "lname",
+                type: "input",
+                message: "What is the employee's last name?"
+            },
+            {
+                name: "role",
+                type: "list",
+                message: "What is the employee's role?",
+                choices: getRole()
+            },
+            {
+                name: "manager",
+                type: "list",
+                message: "Who is the employee's manager?",
+                choices: getMgr()
+            }
+        ])
+}
 
 // function updateEmpRole() {
 //     console.log("Updating employee role database");
