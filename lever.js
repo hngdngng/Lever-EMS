@@ -100,44 +100,67 @@ function viewAllEmp() {
     });
 }
 
-// function addDep() {
-//     inquirer
-//         .prompt({
-//             name: "dep_name",
-//             type: "input",
-//             message: "What is the department name?"
-//         })
-//         .then(answer => {
-//             connection.query("INSERT INTO department (name) VALUES (?)", answer.dep_name, (err, result) => {
-//                 if (err) throw err;
-//             })
-//             console.log("Added department to database");
-//             start();
-//         });
-// }
+function addDep() {
+    inquirer
+        .prompt({
+            name: "dep_name",
+            type: "input",
+            message: "What is the department name?"
+        })
+        .then(answer => {
+            connection.query("INSERT INTO department (name) VALUES (?)", answer.dep_name, (err, result) => {
+                if (err) throw err;
+            })
+            console.log("Added department to database");
+            start();
+        });
+}
 
-// function addRole() {
-//     inquirer
-//         .prompt([
-//             {
-//                 name: "title",
-//                 type: "input",
-//                 message: "What is the role title?"
-//             },
-//             {
-//                 name: "salary",
-//                 type: "input",
-//                 message: "What is the role salary?"
-//             },
-//         ])
-//         .then(answer => {
-//             connection.query("INSERT INTO department (name) VALUES (?)", answer.dep_name, (err, result) => {
-//                 if (err) throw err;
-//             })
-// //             console.log("Added role to database");
-// //             start();
-// //         });
-// // }
+function addRole() {
+    const departments = [];
+    connection.query("SELECT name FROM department", (err, result) => {
+        if (err) throw err;
+        result.forEach(dep => {
+            departments.push(dep.name);
+        });
+    });
+    inquirer
+        .prompt([
+            {
+                name: "title",
+                type: "input",
+                message: "What is the role title?"
+            },
+            {
+                name: "salary",
+                type: "input",
+                message: "What is the role salary?"
+            },
+            {
+                name: "department",
+                type: "list",
+                message: "What is the role department?",
+                choices: departments
+            }
+        ])
+        .then(answer => {
+            console.log(answer);
+            let dept_id;
+            connection.query("SELECT id FROM department WHERE name = ?", answer.department, (err, result) => {
+                if (err) throw err;
+                dept_id = result[0].id;
+                insertRole(answer, dept_id);
+            });
+        });
+}
+
+function insertRole(answer, id) {
+    connection.query("INSERT INTO role (title, salary, department_id) VALUES (?,?,?)", [answer.title, parseInt(answer.salary), id], (err, result) => {
+        if (err) throw err;
+    })
+    console.log("Added role to database");
+    start();
+}
 
 // function addEmp() {
 //     console.log("Added employee to database");
