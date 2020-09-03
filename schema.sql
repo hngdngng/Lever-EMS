@@ -1,8 +1,10 @@
 DROP DATABASE IF EXISTS leverDB;
+-- Create the leverDB database
 CREATE database leverDB;
-
+-- Specify use of leverDB database
 USE leverDB;
 
+-- Create the department, role, and employee tables
 CREATE TABLE department (
   id INT NOT NULL AUTO_INCREMENT,
   name VARCHAR(30) NOT NULL,
@@ -25,3 +27,4 @@ CREATE TABLE employee (
   manager_id INT NULL,
   PRIMARY KEY (id)
 );
+-- Use an SQL GUI like MySQL Workbench to run database
