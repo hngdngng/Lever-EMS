@@ -5,9 +5,9 @@
   Lever is an employee management system that lets users view departments, roles and employees in their company. Add, update and view departments, roles and employees all with a few keystrokes in the terminal. Lever is primarily a back-end application using MySQL and Node.js. 
 
   Video Walkthrough  
-  [![Watch the video](https://img.youtube.com/vi//default.jpg)](https://youtu.be/)  
+  [![Watch the video](https://img.youtube.com/vi/qtLi8_ZyaA4/default.jpg)](https://youtu.be/qtLi8_ZyaA4)  
 
-  CLI
+  CLI  
   ![Image of command line terminal](./assets/console.png) 
 
   ## Table of Contents
