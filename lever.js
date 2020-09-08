@@ -13,7 +13,7 @@ const connection = mysql.createConnection({
     user: "root",
 
     // Your password
-    password: "Dududev21",
+    password: "",
     database: "leverDB"
 });
 
